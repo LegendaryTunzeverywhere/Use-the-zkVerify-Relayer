@@ -45,6 +45,21 @@ async function main() {
             );
             if (jobStatusResponse.data.status === "Aggregated") {
                 console.log("Job aggregated successfully");
+                const aggregationResult = {
+                    jobId: jobStatusResponse.data.jobId,
+                    status: jobStatusResponse.data.status,
+                    statusId: jobStatusResponse.data.statusId,
+                    proofType: jobStatusResponse.data.proofType,
+                    chainId: jobStatusResponse.data.chainId,
+                    createdAt: jobStatusResponse.data.createdAt,
+                    updatedAt: jobStatusResponse.data.updatedAt,
+                    txHash: jobStatusResponse.data.txHash,
+                    blockHash: jobStatusResponse.data.blockHash,
+                    aggregationId: jobStatusResponse.data.aggregationId,
+                    statement: jobStatusResponse.data.statement,
+                    aggregationDetails: jobStatusResponse.data.aggregationDetails
+                };
+                console.log(JSON.stringify(aggregationResult, null, 2));
                 fs.writeFileSync(
                     "aggregation.json",
                     JSON.stringify(
@@ -52,6 +67,8 @@ async function main() {
                             ...jobStatusResponse.data.aggregationDetails,
                             aggregationId: jobStatusResponse.data.aggregationId
                         },
+                        null,
+                        2
                     )
                 );
                 break;

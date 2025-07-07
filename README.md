@@ -18,13 +18,19 @@ This project provides a set of scripts to interact with the zkVerify network. It
 
 1. Clone the repo
    ```sh
-   git clone https://github.com/legendarytunzeverywhere/proof-submission.git
+   git clone https://github.com/legendarytunzeverywhere/Use-the-zkVerify-Relayer.git 
    ```
-2. Install NPM packages
+
+2. Change Directory
+   ```sh
+   cd Use-the-zkVerify-Relayer
+   ```
+
+3. Install NPM packages
    ```sh
    npm install
    ```
-3. Create a `.env` file and add your seed phrase and API_KEY
+4. Create a `.env` file and add your seed phrase and API_KEY
    ```
    SEED_PHRASE= "your seed phrase goes here
    ```

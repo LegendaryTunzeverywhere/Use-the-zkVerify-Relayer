@@ -1,0 +1,6 @@
+node_modules
+.env
+vkey.json
+.DS_Store
+proof.json
+package-lock.json

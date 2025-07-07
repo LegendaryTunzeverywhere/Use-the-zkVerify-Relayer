@@ -5,44 +5,66 @@ dotenv.config();
 
 const API_URL = 'https://relayer-api.horizenlabs.io/api/v1';
 
-const proof = JSON.parse(fs.readFileSync("./proof.json")); // Following the Risc Zero tutorial
-const vkey = JSON.parse(fs.readFileSync("./vkey.json")); // Importing the registered vkhash
+// Load proof and registered verification key hash
+const proof = JSON.parse(fs.readFileSync('./proof.json'));
+const vkey = JSON.parse(fs.readFileSync('./vkey.json')); // { vkey: "..." }
 
 async function main() {
+    // Prepare params for proof submission
     const params = {
-        "proofType": "risc0",
-        "vkRegistered": true, // Set to true since you're using a registered vkHash
-        "chainId": 11155111,
-        "proofOptions": {
-            "version": "V1_2"
+        proofType: "risc0",
+        vkRegistered: true, // Use the registered verification key hash
+        chainId: 11155111, // ETH Sepolia; change if needed
+        proofOptions: {
+            version: "V1_2"
         },
-        "proofData": {
-            "proof": proof.proof,
-            "publicSignals": proof.pub_inputs,
-            "vk": vkey.vkey // Use the registered vkHash
+        proofData: {
+            proof: proof.proof,
+            publicSignals: proof.pub_inputs,
+            vk: vkey.vkey // Use the registered vkHash
         }
     };
 
-    const requestResponse = await axios.post(`${API_URL}/submit-proof/${process.env.API_KEY}`, params);
-    console.log(requestResponse.data);
+    try {
+        // Submit proof
+        const requestResponse = await axios.post(
+            `${API_URL}/submit-proof/${process.env.API_KEY}`,
+            params
+        );
+        console.log(requestResponse.data);
 
-    if (requestResponse.data.optimisticVerify != "success") {
-        console.error("Proof verification failed, check proof artifacts");
-        return;
-    }
-
-    while (true) {
-        const jobStatusResponse = await axios.get(`${API_URL}/job-status/${process.env.API_KEY}/${requestResponse.data.jobId}`);
-        if (jobStatusResponse.data.status === "Aggregated") {
-            console.log("Job aggregation successful");
-            console.log(jobStatusResponse.data);
-            fs.writeFileSync("aggregation.json", JSON.stringify({ ...jobStatusResponse.data.aggregationDetails, aggregationId: jobStatusResponse.data.aggregationId }));
-            break;
-        } else {
-            console.log("Job status: ", jobStatusResponse.data.status);
-            console.log("Waiting for job to complete...");
-            await new Promise(resolve => setTimeout(resolve, 20000));
+        if (requestResponse.data.optimisticVerify !== "success") {
+            console.error("Proof verification failed, check proof artifacts");
+            return;
         }
+
+        // Poll for aggregation status
+        while (true) {
+            const jobStatusResponse = await axios.get(
+                `${API_URL}/job-status/${process.env.API_KEY}/${requestResponse.data.jobId}`
+            );
+            if (jobStatusResponse.data.status === "Aggregated") {
+                console.log("Job aggregated successfully");
+                fs.writeFileSync(
+                    "aggregation.json",
+                    JSON.stringify(
+                        {
+                            ...jobStatusResponse.data.aggregationDetails,
+                            aggregationId: jobStatusResponse.data.aggregationId
+                        },
+                        null,
+                        2
+                    )
+                );
+                break;
+            } else {
+                console.log("Job status:", jobStatusResponse.data.status);
+                console.log("Waiting for job to aggregate...");
+                await new Promise(resolve => setTimeout(resolve, 20000)); // Wait 20 seconds
+            }
+        }
+    } catch (err) {
+        console.error("Error during proof submission or aggregation:", err.response ? err.response.data : err.message);
     }
 }
 

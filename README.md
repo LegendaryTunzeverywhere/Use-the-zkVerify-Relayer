@@ -4,8 +4,8 @@ This project provides a set of scripts to interact with the zkVerify network. It
 
 ## YouTube Videos
 
-[Video 1: Title of the first video](https://www.youtube.com/watch?v=your_video_id_1)
-[Video 2: Title of the second video](https://www.youtube.com/watch?v=your_video_id_2)
+* [Video 1: Title of the first video](https://www.youtube.com/watch?v=your_video_id_1)
+* [Video 2: Title of the second video](https://www.youtube.com/watch?v=your_video_id_2)
 
 ## Getting Started
 

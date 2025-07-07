@@ -4,3 +4,5 @@ vkey.json
 .DS_Store
 proof.json
 package-lock.json
+aggregation.json
+proof-submission.log

@@ -52,8 +52,6 @@ async function main() {
                             ...jobStatusResponse.data.aggregationDetails,
                             aggregationId: jobStatusResponse.data.aggregationId
                         },
-                        null,
-                        2
                     )
                 );
                 break;

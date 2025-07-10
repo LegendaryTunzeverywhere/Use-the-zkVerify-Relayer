@@ -21,7 +21,7 @@ async function main() {
         proofData: {
             proof: proof.proof,
             publicSignals: proof.pub_inputs,
-            vk: vkey.vkey // Use the registered vkHash
+            vk: vkey.hash // Use the registered vkHash
         }
     };
 
